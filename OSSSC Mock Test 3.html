@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OSSSC Mock Test 3 - RI, ARI, AMIN, SFS, VAW, ICDS Supervisor</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --bg-primary: #f0f2f5;
+    --bg-secondary: #e8eaf0;
+    --bg-card: #ffffff;
+    --bg-header: #1a3a6b;
+    --bg-accent: #2563eb;
+    --text-primary: #1a1a2e;
+    --text-secondary: #4a4a6a;
+    --text-light: #ffffff;
+    --border-color: #c8ccd8;
+    --option-bg: #f4f6fb;
+    --option-hover: #dde3f5;
+    --option-selected: #2563eb;
+    --option-selected-text: #ffffff;
+    --correct: #16a34a;
+    --wrong: #dc2626;
+    --skipped: #d97706;
+    --nav-answered: #16a34a;
+    --nav-skipped: #d97706;
+    --nav-current: #2563eb;
+    --nav-unanswered: #94a3b8;
+    --shadow: 0 4px 20px rgba(37,99,235,0.10);
+    --radius: 14px;
+    --btn-bg: #2563eb;
+    --btn-text: #fff;
+    --watermark: rgba(37,99,235,0.09);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #181c2a;
+      --bg-secondary: #1e2236;
+      --bg-card: #232840;
+      --bg-header: #111827;
+      --bg-accent: #2563eb;
+      --text-primary: #e8eaf6;
+      --text-secondary: #a0a8c8;
+      --text-light: #ffffff;
+      --border-color: #2d3354;
+      --option-bg: #1e2440;
+      --option-hover: #2a3060;
+      --option-selected: #2563eb;
+      --option-selected-text: #ffffff;
+      --shadow: 0 4px 20px rgba(0,0,0,0.30);
+      --watermark: rgba(120,160,255,0.07);
+    }
+  }
+
+  body {
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .watermark-global {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    font-size: 9px;
+    color: var(--watermark);
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.7;
+  }
+
+  .screen { display: none; width: 100%; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ===== INSTRUCTIONS SCREEN ===== */
+  #instructions-screen {
+    background: linear-gradient(135deg, #1a3a6b 0%, #2563eb 60%, #0ea5e9 100%);
+    padding: 0;
+  }
+  .inst-header {
+    background: rgba(255,255,255,0.08);
+    padding: 22px 18px 16px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+  .inst-logo { font-size: 13px; color: #a8c8ff; font-weight: 700; letter-spacing: 2px; margin-bottom: 4px; }
+  .inst-title { font-size: 22px; font-weight: 900; color: #fff; line-height: 1.2; }
+  .inst-subtitle { font-size: 12px; color: #c8dcff; margin-top: 5px; font-weight: 600; letter-spacing: 1px; }
+  .inst-body { padding: 16px; max-width: 480px; margin: 0 auto; }
+  .inst-card {
+    background: rgba(255,255,255,0.13);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(255,255,255,0.18);
+    backdrop-filter: blur(8px);
+  }
+  .inst-card h3 { font-size: 13px; font-weight: 800; color: #ffd700; margin-bottom: 10px; letter-spacing: 1px; text-transform: uppercase; }
+  .inst-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.09);
+  }
+  .inst-row:last-child { border-bottom: none; }
+  .inst-row span:first-child { color: #c8dcff; font-size: 12px; font-weight: 600; }
+  .inst-row span:last-child { color: #fff; font-size: 13px; font-weight: 800; }
+  .inst-rules { list-style: none; }
+  .inst-rules li {
+    color: #e0ecff; font-size: 12px; font-weight: 600;
+    padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .inst-rules li::before { content: "→"; color: #ffd700; flex-shrink: 0; }
+  .legend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #e0ecff; font-weight: 600; }
+  .legend-dot { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; }
+  .form-section {
+    background: rgba(255,255,255,0.13);
+    border-radius: 14px; padding: 16px; margin-bottom: 14px;
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  .form-section h3 { font-size: 13px; font-weight: 800; color: #ffd700; margin-bottom: 12px; letter-spacing: 1px; text-transform: uppercase; }
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; color: #c8dcff; font-size: 11px; font-weight: 700; margin-bottom: 5px; letter-spacing: 0.5px; }
+  .form-group input {
+    width: 100%; padding: 12px 14px; border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    background: rgba(255,255,255,0.12); color: #fff;
+    font-size: 14px; font-weight: 600; outline: none; transition: border 0.2s;
+  }
+  .form-group input::placeholder { color: rgba(255,255,255,0.45); }
+  .form-group input:focus { border-color: #ffd700; }
+  .start-btn {
+    width: 100%; padding: 16px;
+    background: linear-gradient(90deg, #ffd700, #ffb300);
+    color: #1a1a2e; border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 900; cursor: pointer; letter-spacing: 1px;
+    box-shadow: 0 4px 20px rgba(255,215,0,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .start-btn:active { transform: scale(0.97); }
+
+  /* ===== TEST SCREEN ===== */
+  #test-screen { background: var(--bg-primary); }
+  .test-header {
+    background: var(--bg-header); padding: 10px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .test-header-left { display: flex; align-items: center; gap: 10px; }
+  .test-logo-sm { font-size: 10px; color: #a8c8ff; font-weight: 700; }
+  .test-title-sm { font-size: 13px; color: #fff; font-weight: 800; }
+  .timer-box {
+    background: linear-gradient(90deg, #ffd700, #ffb300);
+    color: #1a1a2e; border-radius: 10px; padding: 6px 12px;
+    font-size: 18px; font-weight: 900; letter-spacing: 2px;
+    min-width: 80px; text-align: center; box-shadow: 0 2px 8px rgba(255,215,0,0.3);
+  }
+  .timer-box.warning { background: linear-gradient(90deg, #ff6b6b, #dc2626); color: #fff; }
+
+  .progress-bar-wrap { background: var(--bg-secondary); height: 4px; position: sticky; top: 56px; z-index: 99; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #2563eb, #0ea5e9); transition: width 0.3s; }
+
+  .section-badge {
+    display: inline-block; background: linear-gradient(90deg, #2563eb, #0ea5e9);
+    color: #fff; font-size: 10px; font-weight: 800;
+    padding: 3px 10px; border-radius: 20px; letter-spacing: 1px;
+    margin: 10px 14px 4px; text-transform: uppercase;
+  }
+
+  .question-area {
+    padding: 10px 14px 6px; position: relative;
+  }
+  .question-area::after {
+    content: "classes and information";
+    position: absolute; bottom: 8px; right: 14px;
+    font-size: 8px; color: var(--watermark); font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase; pointer-events: none;
+  }
+  .q-number { font-size: 11px; color: var(--text-secondary); font-weight: 700; margin-bottom: 6px; }
+  .q-text {
+    font-size: 15px; font-weight: 700; color: var(--text-primary); line-height: 1.5;
+    background: var(--bg-card); border-radius: 12px; padding: 14px;
+    box-shadow: var(--shadow); border: 1.5px solid var(--border-color); min-height: 60px;
+  }
+
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px 14px; }
+  .option-btn {
+    background: var(--option-bg); border: 2px solid var(--border-color);
+    border-radius: 12px; padding: 12px 10px; cursor: pointer;
+    display: flex; align-items: flex-start; gap: 8px;
+    transition: all 0.18s; text-align: left; min-height: 56px; position: relative;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .option-btn:active { transform: scale(0.97); }
+  .option-btn.selected { background: var(--option-selected); border-color: var(--option-selected); color: var(--option-selected-text); }
+  .opt-label {
+    font-size: 12px; font-weight: 900; flex-shrink: 0;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: rgba(255,255,255,0.25); display: flex;
+    align-items: center; justify-content: center; color: inherit;
+    border: 1.5px solid currentColor;
+  }
+  .option-btn:not(.selected) .opt-label { background: var(--bg-accent); color: #fff; border-color: var(--bg-accent); }
+  .opt-text { font-size: 13px; font-weight: 700; color: inherit; line-height: 1.4; flex: 1; }
+
+  .nav-buttons { display: flex; gap: 10px; padding: 8px 14px; align-items: center; }
+  .nav-btn {
+    flex: 1; padding: 13px 8px; border: none; border-radius: 12px;
+    font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .prev-btn { background: var(--bg-secondary); color: var(--text-primary); border: 2px solid var(--border-color); }
+  .next-btn { background: var(--btn-bg); color: var(--btn-text); }
+  .skip-btn { background: var(--bg-secondary); color: var(--skipped); border: 2px solid var(--skipped); flex: 0.7; font-size: 12px; }
+
+  .submit-area { padding: 6px 14px 16px; }
+  .submit-btn {
+    width: 100%; padding: 15px;
+    background: linear-gradient(90deg, #16a34a, #22c55e);
+    color: #fff; border: none; border-radius: 12px;
+    font-size: 16px; font-weight: 900; cursor: pointer; letter-spacing: 1px;
+    box-shadow: 0 4px 16px rgba(22,163,74,0.3); transition: all 0.15s;
+  }
+  .submit-btn:active { transform: scale(0.97); }
+
+  /* ===== QUESTION PALETTE ===== */
+  .palette-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; background: var(--bg-card); cursor: pointer;
+    border-top: 2px solid var(--border-color); border-bottom: 1px solid var(--border-color);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .palette-toggle-text { font-size: 12px; font-weight: 800; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+  .palette-toggle-icon { font-size: 16px; transition: transform 0.25s; color: var(--bg-accent); }
+  .palette-toggle-icon.open { transform: rotate(180deg); }
+  .palette-container {
+    background: var(--bg-card); overflow: hidden;
+    transition: max-height 0.35s ease; max-height: 0;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .palette-container.open { max-height: 300px; overflow-y: auto; }
+  .palette-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; padding: 10px 14px 6px; }
+  .stat-item { text-align: center; padding: 6px 4px; border-radius: 8px; font-size: 10px; font-weight: 800; color: #fff; }
+  .stat-item.answered { background: #16a34a; }
+  .stat-item.skipped { background: #d97706; }
+  .stat-item.unanswered { background: #64748b; }
+  .stat-item.total { background: #2563eb; }
+  .stat-count { font-size: 18px; font-weight: 900; display: block; }
+  .palette-grid { display: grid; grid-template-columns: repeat(8,1fr); gap: 6px; padding: 8px 14px 14px; }
+  .palette-num {
+    width: 100%; aspect-ratio: 1; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; cursor: pointer; border: none;
+    transition: transform 0.1s; -webkit-tap-highlight-color: transparent;
+  }
+  .palette-num:active { transform: scale(0.9); }
+  .palette-num.pn-unanswered { background: var(--bg-secondary); color: var(--text-secondary); }
+  .palette-num.pn-answered { background: #16a34a; color: #fff; }
+  .palette-num.pn-skipped { background: #d97706; color: #fff; }
+  .palette-num.pn-current { background: #2563eb; color: #fff; box-shadow: 0 0 0 2px #ffd700; }
+
+  /* ===== RESULT SCREEN ===== */
+  #result-screen { background: var(--bg-primary); padding: 0; }
+  .result-header { background: linear-gradient(135deg, #1a3a6b 0%, #2563eb 100%); padding: 24px 18px; text-align: center; }
+  .result-title { font-size: 22px; font-weight: 900; color: #fff; }
+  .result-subtitle { font-size: 12px; color: #c8dcff; margin-top: 4px; font-weight: 600; }
+  .score-circle-wrap { display: flex; justify-content: center; margin: 20px 0; }
+  .score-circle {
+    width: 140px; height: 140px; border-radius: 50%; background: var(--bg-card);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: 0 8px 32px rgba(37,99,235,0.18); border: 6px solid #2563eb;
+  }
+  .score-num { font-size: 32px; font-weight: 900; color: var(--bg-accent); }
+  .score-total { font-size: 13px; color: var(--text-secondary); font-weight: 700; }
+  .score-pct { font-size: 11px; color: var(--text-secondary); font-weight: 600; }
+  .result-cards { padding: 0 14px 14px; }
+  .result-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  .result-card { background: var(--bg-card); border-radius: 12px; padding: 14px; text-align: center; box-shadow: var(--shadow); border: 1.5px solid var(--border-color); }
+  .result-card .rc-num { font-size: 26px; font-weight: 900; margin-bottom: 4px; }
+  .result-card .rc-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); }
+  .rc-correct { color: #16a34a; } .rc-wrong { color: #dc2626; } .rc-skip { color: #d97706; } .rc-negative { color: #dc2626; }
+
+  .section-scores { background: var(--bg-card); border-radius: 12px; padding: 14px; margin: 0 14px 14px; box-shadow: var(--shadow); border: 1.5px solid var(--border-color); }
+  .section-scores h3 { font-size: 13px; font-weight: 800; color: var(--text-primary); margin-bottom: 10px; }
+  .sec-score-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border-color); font-size: 12px; }
+  .sec-score-row:last-child { border-bottom: none; }
+  .sec-name { font-weight: 700; color: var(--text-primary); } .sec-val { font-weight: 800; color: var(--bg-accent); }
+
+  .result-actions { padding: 0 14px 30px; display: flex; gap: 10px; flex-direction: column; }
+  .review-btn { width: 100%; padding: 14px; background: var(--btn-bg); color: #fff; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; }
+  .retry-btn { width: 100%; padding: 14px; background: var(--bg-secondary); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 12px; font-size: 15px; font-weight: 800; cursor: pointer; }
+
+  /* ===== REVIEW SCREEN ===== */
+  #review-screen { background: var(--bg-primary); }
+  .review-header {
+    background: var(--bg-header); padding: 14px; display: flex;
+    align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100;
+  }
+  .back-btn-r { background: rgba(255,255,255,0.15); border: none; color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .review-title { color: #fff; font-size: 16px; font-weight: 800; }
+  .review-question { background: var(--bg-card); border-radius: 12px; margin: 10px 14px; padding: 14px; box-shadow: var(--shadow); border: 1.5px solid var(--border-color); }
+  .rq-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .rq-num { font-size: 11px; font-weight: 800; color: var(--text-secondary); }
+  .rq-status { font-size: 11px; font-weight: 800; padding: 2px 10px; border-radius: 20px; }
+  .rq-status.correct { background: #dcfce7; color: #16a34a; }
+  .rq-status.wrong { background: #fee2e2; color: #dc2626; }
+  .rq-status.skipped { background: #fef9c3; color: #d97706; }
+  .rq-text { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; line-height: 1.5; }
+  .rq-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .rq-opt { padding: 8px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; display: flex; gap: 6px; align-items: flex-start; border: 1.5px solid var(--border-color); background: var(--option-bg); color: var(--text-primary); }
+  .rq-opt.correct-opt { background: #dcfce7; border-color: #16a34a; color: #16a34a; }
+  .rq-opt.wrong-opt { background: #fee2e2; border-color: #dc2626; color: #dc2626; }
+  .rq-opt-lbl { font-weight: 900; flex-shrink: 0; }
+
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.55); z-index: 1000;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box { background: var(--bg-card); border-radius: 18px; padding: 24px 20px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal-icon { font-size: 40px; margin-bottom: 12px; }
+  .modal-title { font-size: 18px; font-weight: 900; color: var(--text-primary); margin-bottom: 8px; }
+  .modal-text { font-size: 13px; color: var(--text-secondary); font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-cancel { flex: 1; padding: 13px; background: var(--bg-secondary); color: var(--text-primary); border: 2px solid var(--border-color); border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; }
+  .modal-confirm { flex: 1; padding: 13px; background: #16a34a; color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 800; cursor: pointer; }
+
+  /* Social links on result */
+  .social-links { display: flex; gap: 10px; padding: 0 14px 14px; flex-wrap: wrap; }
+  .social-btn {
+    flex: 1; min-width: 120px; padding: 10px 14px; border-radius: 10px;
+    font-size: 12px; font-weight: 800; cursor: pointer; border: none;
+    text-decoration: none; text-align: center; display: block;
+  }
+  .whatsapp-btn { background: #25d366; color: #fff; }
+  .youtube-btn { background: #ff0000; color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="watermark-global">classes and information</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="submit-modal">
+  <div class="modal-box">
+    <div class="modal-icon">📋</div>
+    <div class="modal-title">Submit Test?</div>
+    <div class="modal-text" id="modal-text">Are you sure you want to submit?</div>
+    <div class="modal-btns">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-confirm" onclick="submitTest()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== INSTRUCTIONS SCREEN ===== -->
+<div id="instructions-screen" class="screen active">
+  <div class="inst-header">
+    <div class="inst-logo">OSSSC • CLASSES AND INFORMATION</div>
+    <div class="inst-title">Mock Test 3</div>
+    <div class="inst-subtitle">RI • ARI • AMIN • SFS • VAW • ICDS SUPERVISOR</div>
+  </div>
+  <div class="inst-body">
+    <div class="inst-card">
+      <h3>📊 Exam Pattern</h3>
+      <div class="inst-row"><span>Odia Language</span><span>15 Marks</span></div>
+      <div class="inst-row"><span>English Language</span><span>20 Marks</span></div>
+      <div class="inst-row"><span>Math / Arithmetic</span><span>20 Marks</span></div>
+      <div class="inst-row"><span>General Studies</span><span>25 Marks</span></div>
+      <div class="inst-row"><span>Computer Knowledge</span><span>20 Marks</span></div>
+      <div class="inst-row"><span>Total Questions</span><span>100</span></div>
+      <div class="inst-row"><span>Total Marks</span><span>100</span></div>
+      <div class="inst-row"><span>Time Duration</span><span>90 Minutes</span></div>
+    </div>
+    <div class="inst-card">
+      <h3>⚠️ Important Instructions</h3>
+      <ul class="inst-rules">
+        <li>Each correct answer carries <strong>1 mark</strong></li>
+        <li>Wrong answer has <strong>−0.33 negative marking</strong></li>
+        <li>Unattempted questions carry <strong>0 marks</strong></li>
+        <li>Do not close or refresh the browser during test</li>
+        <li>Test will auto-submit when timer reaches 00:00</li>
+        <li>Use Question Palette to navigate between questions</li>
+        <li>You can review and change answers before submission</li>
+        <li>Click SUBMIT only when you are ready to finish</li>
+      </ul>
+    </div>
+    <div class="inst-card">
+      <h3>🎨 Question Status Legend</h3>
+      <div class="legend-grid">
+        <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div>Answered</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#d97706"></div>Skipped</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#64748b"></div>Not Visited</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2563eb;box-shadow:0 0 0 2px #ffd700"></div>Current</div>
+      </div>
+    </div>
+
+    <!-- REGISTRATION: Only Name + Mobile -->
+    <div class="form-section">
+      <h3>👤 Candidate Registration</h3>
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="cand-name" placeholder="Enter your full name" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label>Mobile Number *</label>
+        <input type="tel" id="cand-mobile" placeholder="Enter 10-digit mobile number" maxlength="10" inputmode="numeric">
+      </div>
+    </div>
+
+    <button class="start-btn" id="startBtn" onclick="startTest()">🚀 START MOCK TEST 3</button>
+    <br><br>
+  </div>
+</div>
+
+<!-- ===== TEST SCREEN ===== -->
+<div id="test-screen" class="screen">
+  <div class="test-header">
+    <div class="test-header-left">
+      <div>
+        <div class="test-logo-sm">OSSSC MOCK TEST 3</div>
+        <div class="test-title-sm" id="cand-name-display">Candidate</div>
+      </div>
+    </div>
+    <div class="timer-box" id="timer">90:00</div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-bar" style="width:1%"></div>
+  </div>
+
+  <div class="palette-toggle" onclick="togglePalette()">
+    <div class="palette-toggle-text">
+      <span>📊</span>
+      <span>Question Palette</span>
+      <span id="palette-answered-count" style="color:#16a34a;font-size:11px"></span>
+    </div>
+    <div class="palette-toggle-icon" id="palette-icon">▲</div>
+  </div>
+  <div class="palette-container" id="palette-container">
+    <div class="palette-stats" id="palette-stats"></div>
+    <div class="palette-grid" id="palette-grid"></div>
+  </div>
+
+  <div class="section-badge" id="section-badge">Section</div>
+  <div class="question-area">
+    <div class="q-number" id="q-number">Question 1 of 100</div>
+    <div class="q-text" id="q-text"></div>
+  </div>
+  <div class="options-grid" id="options-grid"></div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn prev-btn" onclick="prevQuestion()">◀ Prev</button>
+    <button class="nav-btn skip-btn" onclick="skipQuestion()">Skip ⏭</button>
+    <button class="nav-btn next-btn" onclick="nextQuestion()">Next ▶</button>
+  </div>
+  <div class="submit-area">
+    <button class="submit-btn" onclick="openModal()">✅ SUBMIT TEST</button>
+  </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="result-screen" class="screen">
+  <div class="result-header">
+    <div class="result-title">🎉 Test Completed!</div>
+    <div class="result-subtitle">OSSSC Mock Test 3 — Result</div>
+  </div>
+  <div class="score-circle-wrap">
+    <div class="score-circle">
+      <div class="score-num" id="res-score">0</div>
+      <div class="score-total">out of 100</div>
+      <div class="score-pct" id="res-pct">0%</div>
+    </div>
+  </div>
+  <div class="result-cards">
+    <div class="result-row">
+      <div class="result-card"><div class="rc-num rc-correct" id="res-correct">0</div><div class="rc-label">✅ Correct</div></div>
+      <div class="result-card"><div class="rc-num rc-wrong" id="res-wrong">0</div><div class="rc-label">❌ Wrong</div></div>
+    </div>
+    <div class="result-row">
+      <div class="result-card"><div class="rc-num rc-skip" id="res-skip">0</div><div class="rc-label">⏭ Skipped</div></div>
+      <div class="result-card"><div class="rc-num rc-negative" id="res-negative">0</div><div class="rc-label">➖ Negative</div></div>
+    </div>
+  </div>
+  <div class="section-scores">
+    <h3>📚 Section-Wise Score</h3>
+    <div class="sec-score-row"><span class="sec-name">Odia Language (Q1–15)</span><span class="sec-val" id="ss-odia">0</span></div>
+    <div class="sec-score-row"><span class="sec-name">English Language (Q16–35)</span><span class="sec-val" id="ss-english">0</span></div>
+    <div class="sec-score-row"><span class="sec-name">Math / Arithmetic (Q36–55)</span><span class="sec-val" id="ss-math">0</span></div>
+    <div class="sec-score-row"><span class="sec-name">General Studies (Q56–80)</span><span class="sec-val" id="ss-gs">0</span></div>
+    <div class="sec-score-row"><span class="sec-name">Computer Knowledge (Q81–100)</span><span class="sec-val" id="ss-computer">0</span></div>
+  </div>
+  <div class="social-links">
+    <a class="social-btn whatsapp-btn" href="https://whatsapp.com/channel/classesandinformation" target="_blank">📱 Join WhatsApp</a>
+    <a class="social-btn youtube-btn" href="https://youtube.com/@classesandinformation" target="_blank">▶ YouTube Channel</a>
+  </div>
+  <div class="result-actions">
+    <button class="review-btn" onclick="showReview()">🔍 Review All Answers</button>
+    <button class="retry-btn" onclick="retryTest()">🔄 Retry Test</button>
+  </div>
+</div>
+
+<!-- ===== REVIEW SCREEN ===== -->
+<div id="review-screen" class="screen">
+  <div class="review-header">
+    <button class="back-btn-r" onclick="showScreen('result-screen')">◀ Back</button>
+    <div class="review-title">Answer Review — OSSSC Mock Test 3</div>
+  </div>
+  <div id="review-content" style="padding-bottom:30px"></div>
+</div>
+
+<script>
+// ============================================================
+// QUESTION BANK — 100 REAL EXAM LEVEL QUESTIONS
+// OSSSC CRE (RI/ARI/AMIN/ICDS/SFS/VAW) Standard
+// Based on Oct 2025 Prelim Exam Pattern
+// ============================================================
+const allQuestions = [
+
+  // ======== ODIA LANGUAGE (Q1–Q15) ========
+  // Sandhi, Samas, Upsarga, Pratyay, Synonyms, Grammar, Literature
+
+  {s:"Odia",q:"'ଆକାଶ' ର ସମାର୍ଥ ଶବ୍ଦ କ'ଣ?",o:["ନଭ","ଧରଣୀ","ସ୍ୱର","ଜଳ"],a:0},
+  // Correct: ନଭ (sky)
+
+  {s:"Odia",q:"'ଜ୍ଞାନ' ଶବ୍ଦର ବିପ୍ରୀତ ଶବ୍ଦ ─",o:["ବିଦ୍ୟା","ଅଜ୍ଞାନ","ଶ୍ରଦ୍ଧା","ବୁଦ୍ଧି"],a:1},
+  // Correct: ଅଜ୍ଞାନ
+
+  {s:"Odia",q:"ଓଡ଼ିଆ ସାହିତ୍ୟର ଆଦିକବି କିଏ?",o:["ସାରଳାଦାସ","ଫକୀର ମୋହନ ସେନାପତି","ଗୋପୀନାଥ ମହାନ୍ତି","ଉପେନ୍ଦ୍ର ଭଞ୍ଜ"],a:0},
+  // Correct: ସାରଳାଦାସ — Sarala Das is the Adi Kabi of Odia literature
+
+  {s:"Odia",q:"'ଉପ' ─ ଏହି ଉପସର୍ଗ ଯୋଗ ଦ୍ୱାରା ଏକ ଶବ୍ଦ ─",o:["ଉପକାର","ଅପକାର","ଆଧାର","ଇଚ୍ଛା"],a:0},
+  // Correct: ଉପକାର (upakar)
+
+  {s:"Odia",q:"'ଗୋପୀନାଥ ମହାନ୍ତି' ଜ୍ଞାନପୀଠ ପୁରସ୍କାର ପ୍ରାପ୍ତ ଓଡ଼ିଆ ସାହିତ୍ୟ ─",o:["ପ୍ରଜାପ୍ରତିଭା","ଅମୃତ ସନ୍ତାନ","ପରଜା","ଦ୍ୱୈଥ ଜୀବନ"],a:2},
+  // Correct: ପରଜା — Paraja won Jnanpith Award for Gopinath Mohanty
+
+  {s:"Odia",q:"'ସ + ଜୀବ' ─ ଏଠାରେ 'ସ' ହେଲା ─",o:["ପ୍ରତ୍ୟୟ","ଉପସର୍ଗ","ସ୍ଥ","ସମ୍ଧ"],a:1},
+  // Correct: ଉପସର୍ଗ (prefix)
+
+  {s:"Odia",q:"'ଅଶ୍ୱ' ଶବ୍ଦର ଓଡ଼ିଆ ଅର୍ଥ ─",o:["ଘୋଡ଼ା","ହାତୀ","ସିଂହ","ଷଣ୍ଢ"],a:0},
+  // Correct: ଘୋଡ଼ା (horse)
+
+  {s:"Odia",q:"'ଫକୀର ମୋହନ ସେନାପତି'ଙ୍କ ରଚିତ ପ୍ରଥମ ଆଧୁନିକ ଓଡ଼ିଆ ଉପନ୍ୟାସ ─",o:["ଦ୍ୱୈଥ ଜୀବନ","ଛ ମାଣ ଆଠ ଗୁଣ୍ଠ","ଲଛମା","ମାମୁ"],a:1},
+  // Correct: ଛ ମାଣ ଆଠ ଗୁଣ୍ଠ
+
+  {s:"Odia",q:"'ଉତ୍ସବ' ଶବ୍ଦର ଅର୍ଥ ─",o:["ପର୍ବ / ଉଲ୍ଲାସ","ଯୁଦ୍ଧ","ଶୋକ","ଭୟ"],a:0},
+  // Correct: ଉତ୍ସବ = festival / celebration
+
+  {s:"Odia",q:"ଓଡ଼ିଶାର ରାଜ୍ୟ ଭାଷା ─",o:["ହିନ୍ଦୀ","ଓଡ଼ିଆ","ସଂସ୍କୃତ","ଇଂରାଜୀ"],a:1},
+  // Correct: Odia
+
+  {s:"Odia",q:"'ଅ + ଧର୍ମ' ─ ଏହି ସଂଧି ଶବ୍ଦ ─",o:["ଅଧର୍ମ","ଅଁ ଧର୍ମ","ଆଧ୍ୟ","ଆଧ୍ୟ"],a:0},
+  // Correct: ଅଧର୍ମ
+
+  {s:"Odia",q:"'ସ୍ଵ + ଅର୍ଥ' ─ ଓଡ଼ିଆ ସ୍ୱରସଂଧି ─",o:["ସ୍ୱାର୍ଥ","ସ୍ୱ ଅର୍ଥ","ସ୍ୱୟ","ସ୍ୱାଧୀ"],a:0},
+  // Correct: ସ୍ୱାର୍ଥ
+
+  {s:"Odia",q:"'ଉତ୍କଳ ଦୀପିକା' ─ ଓଡ଼ିଆ ଭାଷାର ─",o:["ପ୍ରଥମ ସଂବାଦ ପତ୍ର","ପ୍ରଥମ ଉପନ୍ୟାସ","ପ୍ରଥମ ନାଟ୍ୟ","ଏକ ଓଡ଼ିଆ ଗ୍ରାମ"],a:0},
+  // Correct: First Odia newspaper
+
+  {s:"Odia",q:"'ଚନ୍ଦ୍ର' ଶବ୍ଦର ସମାର୍ଥ ─",o:["ରଜନୀ","ଶଶୀ","ଭାସ୍କର","ଦୀପ"],a:1},
+  // Correct: ଶଶୀ (moon)
+
+  {s:"Odia",q:"'ସ୍ୱ + ଆଧୀନ' ─ ଅର୍ଥ ─",o:["ସ୍ୱାଧୀନ (Independence)","ସ୍ୱ ଆଧୀ","ଅଧୀନ","ଆଧୀ"],a:0},
+  // Correct: ସ୍ୱାଧୀନ
+
+  // ======== ENGLISH LANGUAGE (Q16–Q35) ========
+  // Grammar, Vocabulary, One-word substitution, Idioms
+
+  {s:"English",q:"Choose the correct meaning of 'Procrastinate':",o:["To hurry","To delay or postpone","To organize","To forget"],a:1},
+
+  {s:"English",q:"Fill in the blank: He _____ to school every day.",o:["go","goes","gone","going"],a:1},
+
+  {s:"English",q:"Passive voice of 'She writes a letter':",o:["A letter is written by her","A letter was written by her","A letter has been written","A letter wrote by her"],a:0},
+
+  {s:"English",q:"Antonym of 'Diligent':",o:["Hardworking","Lazy","Sincere","Active"],a:1},
+
+  {s:"English",q:"Correctly spelled word:",o:["Accomodation","Acommodation","Accommodation","Acomodation"],a:2},
+
+  {s:"English",q:"'She is good _____ music.' (Correct preposition):",o:["in","at","on","for"],a:1},
+
+  {s:"English",q:"'What a beautiful flower this is!' — type of sentence:",o:["Declarative","Interrogative","Exclamatory","Imperative"],a:2},
+
+  {s:"English",q:"Synonym of 'Benevolent':",o:["Kind","Cruel","Greedy","Selfish"],a:0},
+
+  {s:"English",q:"'I _____ here since 2019.' — correct form:",o:["am living","was living","have been living","had lived"],a:2},
+
+  {s:"English",q:"One-word substitution: 'One who loves his country':",o:["Patriot","Traitor","Diplomat","Politician"],a:0},
+
+  {s:"English",q:"'He ran fast lest he _____ miss the train.'",o:["should","would","could","shall"],a:0},
+
+  {s:"English",q:"'Break the ice' means:",o:["To start a conversation","To destroy ice","To cool down","To fight"],a:0},
+
+  {s:"English",q:"Error: 'He don't know the answer.' — error is in:",o:["He","don't","know","the answer"],a:1},
+
+  {s:"English",q:"Plural of 'Criterion':",o:["Criterions","Criterias","Criteria","Criterion"],a:2},
+
+  {s:"English",q:"Indirect speech of 'He said, I am hungry.':",o:["He said he was hungry","He said he is hungry","He told I am hungry","He said that I was hungry"],a:0},
+
+  {s:"English",q:"The opposite of 'Transparent':",o:["Clear","Opaque","Bright","Shiny"],a:1},
+
+  {s:"English",q:"'The news _____ disturbing.' (Correct verb):",o:["are","were","is","have been"],a:2},
+
+  {s:"English",q:"'Omnivore' means one who eats:",o:["Only plants","Only meat","Both plants and animals","Only fish"],a:2},
+
+  {s:"English",q:"'Neither he nor his friends _____ responsible.' (Correct verb):",o:["is","are","was","were"],a:1},
+
+  {s:"English",q:"The word 'Ephemeral' means:",o:["Lasting forever","Short-lived","Beautiful","Powerful"],a:1},
+
+  // ======== MATH / ARITHMETIC (Q36–Q55) ========
+  // OSSSC standard: SI/CI, Profit-Loss, Time-Work, Speed, Percentage, Ratio, Mensuration
+
+  {s:"Math",q:"What is 15% of 240?",o:["36","34","38","32"],a:0},
+  // 240 × 15/100 = 36
+
+  {s:"Math",q:"A and B can do a work in 12 and 18 days respectively. Together they finish in:",o:["7.2 days","6 days","8 days","7 days"],a:0},
+  // LCM=36; combined rate=3+2=5 units/day; 36/5=7.2
+
+  {s:"Math",q:"LCM of 12, 18, and 24:",o:["72","48","36","60"],a:0},
+
+  {s:"Math",q:"Simple Interest on ₹5000 at 8% per annum for 3 years:",o:["₹1200","₹1000","₹1500","₹800"],a:0},
+  // SI = 5000×8×3/100 = 1200
+
+  {s:"Math",q:"If 3x + 7 = 22, find x:",o:["4","5","6","3"],a:1},
+  // 3x = 15; x = 5
+
+  {s:"Math",q:"A shopkeeper buys at ₹400 and sells at ₹500. Profit %:",o:["25%","20%","15%","30%"],a:0},
+  // Profit = 100; % = 100/400 × 100 = 25%
+
+  {s:"Math",q:"Average of 7, 14, 21, 28, 35:",o:["21","18","24","20"],a:0},
+  // Sum=105; 105/5=21
+
+  {s:"Math",q:"√169 = ?",o:["13","12","14","11"],a:0},
+
+  {s:"Math",q:"Ratio of 500 ml to 2 litres:",o:["1:4","1:2","2:5","1:3"],a:0},
+  // 500:2000 = 1:4
+
+  {s:"Math",q:"Compound Interest on ₹10,000 at 10% per annum for 2 years:",o:["₹2000","₹2100","₹1900","₹2050"],a:1},
+  // CI = 10000[(1.1)²-1] = 10000×0.21 = 2100
+
+  {s:"Math",q:"A train 150m long passes a pole in 15 seconds. Its speed in km/h:",o:["36 km/h","30 km/h","40 km/h","45 km/h"],a:0},
+  // Speed = 150/15 = 10 m/s = 36 km/h
+
+  {s:"Math",q:"60 students — 40% are boys. Number of girls:",o:["36","24","30","32"],a:0},
+  // Boys=24; Girls=60-24=36
+
+  {s:"Math",q:"Area of rectangle: length 12m, breadth 7m:",o:["84 m²","74 m²","94 m²","76 m²"],a:0},
+
+  {s:"Math",q:"Express 0.375 as a fraction:",o:["3/8","3/4","5/8","1/4"],a:0},
+  // 375/1000 = 3/8
+
+  {s:"Math",q:"Speed = 72 km/h. Distance covered in 15 minutes:",o:["18 km","15 km","20 km","12 km"],a:0},
+  // 72 × 15/60 = 18 km
+
+  {s:"Math",q:"HCF of 36 and 48:",o:["12","6","8","9"],a:0},
+
+  {s:"Math",q:"If selling price = ₹660 and loss% = 12%, find cost price:",o:["₹750","₹720","₹700","₹780"],a:0},
+  // CP = 660/(1-0.12) = 660/0.88 = 750
+
+  {s:"Math",q:"Volume of a cylinder with radius 7cm and height 10cm (π=22/7):",o:["1540 cm³","1440 cm³","1640 cm³","1240 cm³"],a:0},
+  // V = 22/7 × 49 × 10 = 1540
+
+  {s:"Math",q:"What comes next in series: 2, 6, 12, 20, 30, ___?",o:["42","40","44","38"],a:0},
+  // n(n+1): 1×2,2×3,3×4,4×5,5×6,6×7=42
+
+  {s:"Math",q:"A sum doubles in 10 years at Simple Interest. Rate per annum:",o:["10%","8%","12%","15%"],a:0},
+  // SI=P; P=P×R×10/100; R=10%
+
+  // ======== GENERAL STUDIES (Q56–Q80) ========
+  // Odisha GK, India GK, Constitution, Govt Schemes, Science
+
+  {s:"GS",q:"Who is the current Chief Minister of Odisha (June 2024 onwards)?",o:["Naveen Patnaik","Mohan Majhi","Pradip Amat","Dharmendra Pradhan"],a:1},
+  // Mohan Majhi became CM in June 2024 after BJP won elections
+
+  {s:"GS",q:"Which river is called the 'Sorrow of Odisha'?",o:["Mahanadi","Brahmani","Baitarani","Rushikulya"],a:1},
+  // Brahmani was historically called Sorrow of Odisha
+
+  {s:"GS",q:"The Lingaraj Temple is located in:",o:["Puri","Konark","Bhubaneswar","Cuttack"],a:2},
+
+  {s:"GS",q:"Who built the Sun Temple at Konark?",o:["Kapilendra Deva","Narasimha Deva I","Purushottam Deva","Prataparudra Deva"],a:1},
+  // Narasimha Deva I (Ganga dynasty, 13th century)
+
+  {s:"GS",q:"Odisha became a separate province on:",o:["1 April 1936","26 January 1950","15 August 1947","1 November 1956"],a:0},
+
+  {s:"GS",q:"The Chilika Lake is famous for:",o:["Freshwater fishing","Brackish water & Irrawaddy dolphins","Crocodile breeding","Hot springs"],a:1},
+
+  {s:"GS",q:"'Rath Yatra' is celebrated at:",o:["Bhubaneswar","Puri","Konark","Sambalpur"],a:1},
+
+  {s:"GS",q:"Who was the first Governor of Odisha (1936)?",o:["Biswanath Das","Sir John Austen Hubback","Harekrushna Mahtab","Biju Patnaik"],a:1},
+
+  {s:"GS",q:"National Food Security Act (NFSA) was enacted in:",o:["2011","2012","2013","2014"],a:2},
+  // NFSA enacted in 2013
+
+  {s:"GS",q:"ICDS stands for:",o:["Integrated Child Development Services","Indian Child Development Scheme","Integrated Community Development Services","Indian Community Development System"],a:0},
+
+  {s:"GS",q:"Article 21A of Indian Constitution deals with:",o:["Right to Life","Right to Education","Right to Property","Right to Speech"],a:1},
+
+  {s:"GS",q:"PM Kisan Samman Nidhi provides ₹___ per year to farmers:",o:["₹4,000","₹6,000","₹8,000","₹10,000"],a:1},
+
+  {s:"GS",q:"Revenue Inspector (RI) works under which department in Odisha?",o:["Finance Dept","Revenue & Disaster Management Dept","Agriculture Dept","Home Dept"],a:1},
+
+  {s:"GS",q:"Simlipal National Park is in which district?",o:["Keonjhar","Mayurbhanj","Sundargarh","Kandhamal"],a:1},
+
+  {s:"GS",q:"AMIN in revenue department is related to:",o:["Land survey & measurement","Tax collection","Water management","Forest management"],a:0},
+
+  {s:"GS",q:"How many districts are there in Odisha as of 2024?",o:["30","33","38","36"],a:2},
+  // 30 districts as of latest reorganisation in 2024
+
+  {s:"GS",q:"'Bhubaneswar' is known as:",o:["Temple City of India","City of Joy","Pink City","Garden City"],a:0},
+
+  {s:"GS",q:"Which state does NOT share a border with Odisha?",o:["Andhra Pradesh","Chhattisgarh","Telangana","West Bengal"],a:2},
+  // Telangana does not border Odisha; AP, CG, Jharkhand, WB, and MP border it
+
+  {s:"GS",q:"The first Odia newspaper 'Utkala Dipika' was started by:",o:["Gourishankar Ray","Madhusudan Das","Fakir Mohan Senapati","Bichitrananda Das"],a:0},
+  // Gourishankar Ray started Utkala Dipika in 1866
+
+  {s:"GS",q:"VAW stands for:",o:["Village Agriculture Worker","Village Administrative Worker","Village Area Welfare","Visiting Agriculture Watcher"],a:0},
+
+  {s:"GS",q:"Which scheme provides food grains to Below Poverty Line families?",o:["PMGSY","PDS/NFSA","PMAY","MGNREGS"],a:1},
+
+  {s:"GS",q:"Hirakud Dam is built on which river?",o:["Brahmani","Baitarani","Mahanadi","Rushikulya"],a:2},
+
+  {s:"GS",q:"Who appoints the RI (Revenue Inspector) in Odisha?",o:["District Collector","State Government through OSSSC","Tahsildar","Revenue Divisional Commissioner"],a:1},
+
+  {s:"GS",q:"The Panchayati Raj Act in India is related to which Constitutional Amendment?",o:["72nd","73rd","74th","75th"],a:1},
+  // 73rd Amendment — Panchayati Raj; 74th — Urban Local Bodies
+
+  {s:"GS",q:"Which gas is responsible for the Greenhouse Effect?",o:["Oxygen","Nitrogen","Carbon Dioxide","Hydrogen"],a:2},
+
+  // ======== COMPUTER KNOWLEDGE (Q81–Q100) ========
+  // OSSSC Oct 2025 level — MS Office, Internet, Hardware, OS, Shortcuts
+
+  {s:"Computer",q:"What does CPU stand for?",o:["Central Processing Unit","Computer Processing Unit","Central Program Unit","Control Processing Unit"],a:0},
+
+  {s:"Computer",q:"RAM stands for:",o:["Read Access Memory","Random Access Memory","Read All Memory","Random All Memory"],a:1},
+
+  {s:"Computer",q:"1 GB = _____ MB:",o:["1000","512","1024","2048"],a:2},
+
+  {s:"Computer",q:"Which is NOT an input device?",o:["Keyboard","Mouse","Printer","Scanner"],a:2},
+
+  {s:"Computer",q:"The shortcut key to save a file is:",o:["Ctrl+S","Ctrl+P","Ctrl+A","Ctrl+Z"],a:0},
+
+  {s:"Computer",q:"MS Excel is used for:",o:["Word processing","Spreadsheet management","Presentation","Database management"],a:1},
+
+  {s:"Computer",q:"Which extension is used for MS Word documents?",o:[".xlsx",".pptx",".docx",".pdf"],a:2},
+
+  {s:"Computer",q:"'Google Chrome' is a type of:",o:["Operating System","Web Browser","Search Engine","Application Software"],a:1},
+
+  {s:"Computer",q:"Full form of HTTP:",o:["HyperText Transfer Protocol","HyperText Transmission Protocol","High Transfer Text Protocol","Hyper Transfer Text Protocol"],a:0},
+
+  {s:"Computer",q:"Which is an example of Operating System?",o:["MS Word","Google Chrome","Windows 10","VLC Player"],a:2},
+
+  {s:"Computer",q:"Shortcut for 'Undo':",o:["Ctrl+Y","Ctrl+Z","Ctrl+U","Ctrl+X"],a:1},
+
+  {s:"Computer",q:"E-mail stands for:",o:["Electric Mail","Electronic Mail","Easy Mail","Extended Mail"],a:1},
+
+  {s:"Computer",q:"'Firewall' is used for:",o:["Data backup","Network security","Speed enhancement","Data recovery"],a:1},
+
+  {s:"Computer",q:"Which is NOT a programming language?",o:["Python","Java","HTML","MS Excel"],a:3},
+
+  {s:"Computer",q:"Keyboard shortcut for 'Select All':",o:["Ctrl+A","Ctrl+S","Ctrl+E","Ctrl+X"],a:0},
+
+  {s:"Computer",q:"The process of starting a computer is called:",o:["Logging","Booting","Processing","Formatting"],a:1},
+
+  {s:"Computer",q:"In MS Word, which shortcut key is used for 'Find'?",o:["Ctrl+F","Ctrl+H","Ctrl+G","Ctrl+K"],a:0},
+
+  {s:"Computer",q:"Which of these is Secondary Storage?",o:["RAM","CPU Cache","Hard Disk","ROM"],a:2},
+
+  {s:"Computer",q:"'www' in internet URL stands for:",o:["World Wide Web","World Web Wide","Wide World Web","Web World Wide"],a:0},
+
+  {s:"Computer",q:"In MS Excel, to freeze the top row, which option is used?",o:["View → Freeze Panes","Insert → Freeze Row","Format → Freeze","Page Layout → Freeze"],a:0},
+
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let currentQ = 0;
+let answers = new Array(100).fill(null);
+let timerInterval = null;
+let totalSeconds = 90 * 60;
+let testSubmitted = false;
+let paletteOpen = false;
+let candidateData = {};
+
+// ============================================================
+// SCREENS
+// ============================================================
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ============================================================
+// START TEST — FIXED: Only Name + Mobile required
+// ============================================================
+function startTest() {
+  const name = document.getElementById('cand-name').value.trim();
+  const mobile = document.getElementById('cand-mobile').value.trim();
+
+  if (!name || name.length < 2) {
+    alert('Please enter your full name.');
+    document.getElementById('cand-name').focus();
+    return;
+  }
+  if (!mobile || mobile.length < 10 || !/^\d{10}$/.test(mobile)) {
+    alert('Please enter a valid 10-digit mobile number.');
+    document.getElementById('cand-mobile').focus();
+    return;
+  }
+
+  candidateData = { name: name, mobile: mobile };
+
+  // Reset state
+  answers = new Array(100).fill(null);
+  currentQ = 0;
+  totalSeconds = 90 * 60;
+  testSubmitted = false;
+
+  document.getElementById('cand-name-display').textContent = name.split(' ')[0];
+
+  buildPaletteGrid();
+  renderQuestion();
+  startTimer();
+  showScreen('test-screen');
+}
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    totalSeconds--;
+    updateTimerDisplay();
+    if (totalSeconds <= 0) {
+      clearInterval(timerInterval);
+      autoSubmit();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(totalSeconds / 60);
+  const s = totalSeconds % 60;
+  const el = document.getElementById('timer');
+  el.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+  el.className = 'timer-box' + (totalSeconds <= 300 ? ' warning' : '');
+}
+
+// ============================================================
+// RENDER QUESTION
+// ============================================================
+function renderQuestion() {
+  const q = allQuestions[currentQ];
+
+  const sectionMap = {
+    Odia: 'Odia Language',
+    English: 'English Language',
+    Math: 'Math / Arithmetic',
+    GS: 'General Studies',
+    Computer: 'Computer Knowledge'
+  };
+  document.getElementById('section-badge').textContent = sectionMap[q.s] || q.s;
+  document.getElementById('q-number').textContent = 'Question ' + (currentQ + 1) + ' of 100';
+  document.getElementById('q-text').textContent = q.q;
+
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  q.o.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    if (answers[currentQ] === i) btn.classList.add('selected');
+    btn.innerHTML = '<span class="opt-label">' + String.fromCharCode(65 + i) + '</span><span class="opt-text">' + opt + '</span>';
+    btn.onclick = () => selectOption(i);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('progress-bar').style.width = ((currentQ + 1) / 100 * 100) + '%';
+  updatePaletteGrid();
+  updatePaletteCount();
+}
+
+// ============================================================
+// SELECT OPTION
+// ============================================================
+function selectOption(idx) {
+  if (testSubmitted) return;
+  answers[currentQ] = idx;
+  renderQuestion();
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function nextQuestion() {
+  if (currentQ < 99) { currentQ++; renderQuestion(); }
+}
+function prevQuestion() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+}
+function skipQuestion() {
+  if (answers[currentQ] === null) answers[currentQ] = -1;
+  if (currentQ < 99) { currentQ++; renderQuestion(); }
+}
+function jumpTo(n) {
+  currentQ = n;
+  renderQuestion();
+  if (window.innerWidth < 600) {
+    paletteOpen = false;
+    document.getElementById('palette-container').classList.remove('open');
+    document.getElementById('palette-icon').classList.remove('open');
+  }
+}
+
+// ============================================================
+// PALETTE
+// ============================================================
+function togglePalette() {
+  paletteOpen = !paletteOpen;
+  document.getElementById('palette-container').classList.toggle('open', paletteOpen);
+  document.getElementById('palette-icon').classList.toggle('open', paletteOpen);
+}
+
+function buildPaletteGrid() {
+  const grid = document.getElementById('palette-grid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 100; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'palette-num pn-unanswered';
+    btn.textContent = i + 1;
+    btn.id = 'pn-' + i;
+    btn.onclick = () => jumpTo(i);
+    grid.appendChild(btn);
+  }
+}
+
+function updatePaletteGrid() {
+  for (let i = 0; i < 100; i++) {
+    const btn = document.getElementById('pn-' + i);
+    if (!btn) continue;
+    btn.className = 'palette-num';
+    if (i === currentQ) btn.classList.add('pn-current');
+    else if (answers[i] !== null && answers[i] !== -1) btn.classList.add('pn-answered');
+    else if (answers[i] === -1) btn.classList.add('pn-skipped');
+    else btn.classList.add('pn-unanswered');
+  }
+  updatePaletteStats();
+}
+
+function updatePaletteCount() {
+  const answered = answers.filter(a => a !== null && a !== -1).length;
+  document.getElementById('palette-answered-count').textContent = answered + ' answered';
+}
+
+function updatePaletteStats() {
+  const answered = answers.filter(a => a !== null && a !== -1).length;
+  const skipped = answers.filter(a => a === -1).length;
+  const unanswered = answers.filter(a => a === null).length;
+  document.getElementById('palette-stats').innerHTML =
+    '<div class="stat-item total"><span class="stat-count">100</span>Total</div>' +
+    '<div class="stat-item answered"><span class="stat-count">' + answered + '</span>Answered</div>' +
+    '<div class="stat-item skipped"><span class="stat-count">' + skipped + '</span>Skipped</div>' +
+    '<div class="stat-item unanswered"><span class="stat-count">' + unanswered + '</span>Pending</div>';
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
+function openModal() {
+  const unattempted = answers.filter(a => a === null).length;
+  document.getElementById('modal-text').textContent =
+    (100 - unattempted) + ' questions attempted, ' + unattempted + ' unattempted. Submit now? This cannot be undone.';
+  document.getElementById('submit-modal').classList.add('active');
+}
+function closeModal() {
+  document.getElementById('submit-modal').classList.remove('active');
+}
+function autoSubmit() { submitTest(); }
+
+function submitTest() {
+  closeModal();
+  if (timerInterval) clearInterval(timerInterval);
+  testSubmitted = true;
+  calculateAndShowResult();
+}
+
+// ============================================================
+// CALCULATE RESULT
+// ============================================================
+function calculateAndShowResult() {
+  let correct = 0, wrong = 0, skip = 0;
+
+  allQuestions.forEach((q, i) => {
+    if (answers[i] === null || answers[i] === -1) { skip++; }
+    else if (answers[i] === q.a) { correct++; }
+    else { wrong++; }
+  });
+
+  const score = parseFloat((correct - wrong * 0.33).toFixed(2));
+  const pct = parseFloat((score / 100 * 100).toFixed(1));
+
+  document.getElementById('res-score').textContent = score;
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-skip').textContent = skip;
+  document.getElementById('res-negative').textContent = (wrong * 0.33).toFixed(2);
+
+  // Section scores
+  const sectionRanges = { Odia: [0, 14], English: [15, 34], Math: [35, 54], GS: [55, 79], Computer: [80, 99] };
+  const elMap = { Odia: 'ss-odia', English: 'ss-english', Math: 'ss-math', GS: 'ss-gs', Computer: 'ss-computer' };
+  Object.keys(sectionRanges).forEach(sec => {
+    const [start, end] = sectionRanges[sec];
+    let sc = 0, wr = 0;
+    for (let i = start; i <= end; i++) {
+      if (answers[i] !== null && answers[i] !== -1) {
+        if (answers[i] === allQuestions[i].a) sc++;
+        else wr++;
+      }
+    }
+    document.getElementById(elMap[sec]).textContent = parseFloat((sc - wr * 0.33).toFixed(2));
+  });
+
+  // Send to Formspree
+  sendToFormspree(correct, wrong, skip, score, pct);
+  showScreen('result-screen');
+}
+
+// ============================================================
+// FORMSPREE SUBMISSION
+// ============================================================
+function sendToFormspree(correct, wrong, skip, score, pct) {
+  const timeTaken = Math.floor((90 * 60 - totalSeconds) / 60) + ' min ' + ((90 * 60 - totalSeconds) % 60) + ' sec';
+  const data = {
+    name: candidateData.name,
+    mobile: candidateData.mobile,
+    test: 'OSSSC Mock Test 3',
+    score: score,
+    percentage: pct + '%',
+    correct_answers: correct,
+    wrong_answers: wrong,
+    skipped: skip,
+    negative_marks: (wrong * 0.33).toFixed(2),
+    time_taken: timeTaken,
+    submitted_at: new Date().toLocaleString('en-IN')
+  };
+  fetch('https://formspree.io/f/xzdjnywy', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(data)
+  }).catch(e => console.log('Formspree error:', e));
+}
+
+// ============================================================
+// REVIEW
+// ============================================================
+function showReview() {
+  const container = document.getElementById('review-content');
+  container.innerHTML = '';
+  const sectionMap = { Odia: 'Odia', English: 'English', Math: 'Math', GS: 'G.S.', Computer: 'Computer' };
+
+  allQuestions.forEach((q, i) => {
+    let status = 'skipped';
+    if (answers[i] !== null && answers[i] !== -1) {
+      status = answers[i] === q.a ? 'correct' : 'wrong';
+    }
+    const optsHtml = q.o.map((opt, oi) => {
+      let cls = 'rq-opt';
+      if (oi === q.a) cls += ' correct-opt';
+      if (answers[i] === oi && oi !== q.a) cls += ' wrong-opt';
+      return '<div class="' + cls + '"><span class="rq-opt-lbl">' + String.fromCharCode(65 + oi) + '.</span><span>' + opt + '</span></div>';
+    }).join('');
+
+    const statusLabel = status === 'correct' ? '✅ Correct' : status === 'wrong' ? '❌ Wrong' : '⏭ Skipped';
+    const wrongNote = (answers[i] !== null && answers[i] !== -1 && answers[i] !== q.a)
+      ? '<div style="font-size:11px;color:#16a34a;font-weight:700;margin-top:6px">✅ Correct Ans: ' + String.fromCharCode(65 + q.a) + '. ' + q.o[q.a] + '</div>'
+      : '';
+
+    container.innerHTML +=
+      '<div class="review-question">' +
+      '<div class="rq-header">' +
+      '<div class="rq-num">Q' + (i + 1) + ' • ' + (sectionMap[q.s] || q.s) + '</div>' +
+      '<div class="rq-status ' + status + '">' + statusLabel + '</div>' +
+      '</div>' +
+      '<div class="rq-text">' + q.q + '</div>' +
+      '<div class="rq-opts">' + optsHtml + '</div>' +
+      wrongNote +
+      '</div>';
+  });
+  showScreen('review-screen');
+}
+
+function retryTest() {
+  if (confirm('Restart the test from beginning?')) {
+    if (timerInterval) clearInterval(timerInterval);
+    showScreen('instructions-screen');
+  }
+}
+
+// Auto-close palette on load
+window.addEventListener('load', () => { paletteOpen = false; });
+</script>
+</body>
+</html>
